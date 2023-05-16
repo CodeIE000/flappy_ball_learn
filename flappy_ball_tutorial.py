@@ -39,4 +39,5 @@ class Bird:
 		d = self.vel*self.tick_count + 1.5*self.tick_count**2
 
 		# uep
+		# hello
 
