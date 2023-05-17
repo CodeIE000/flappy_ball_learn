@@ -96,7 +96,7 @@ class Pipe:
 		self.set_height()
 
 	def set_height(self):
-		self.height = random.randrange(50, 450)
+		self.height = random.randrange(60, 350)
 		self.top = self.height - self.PIPE_TOP.get_height()
 		self.bottom = self.height + self.GAP
 
@@ -108,12 +108,12 @@ class Pipe:
 		win.blit(self.PIPE_BOTTOM, (self.x, self.bottom))
 
 	def collide(self, ball):
-		ball_mask = bird.get_mask()
+		ball_mask = ball.get_mask()
 		top_mask = pygame.mask.from_surface(self.PIPE_TOP)
 		bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
 
 		top_offset = (self.x - ball.x, self.top - round(ball.y))
-		bottom_offset = (self.x - bird.x, self.bottom - round(ball.y))
+		bottom_offset = (self.x - ball.x, self.bottom - round(ball.y))
 
 		b_point = ball_mask.overlap(bottom_mask, bottom_offset)
 		t_point = ball_mask.overlap(top_mask, top_offset)
@@ -124,7 +124,7 @@ class Pipe:
 		return False
 
 class Base:
-	VEL = 5
+	VEL = 30
 	WIDTH = BASE_IMG.get_width()
 	IMG = BASE_IMG
 
@@ -166,6 +166,8 @@ def main():
 	win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 	clock = pygame.time.Clock()
 
+	score = 0
+
 	run = True
 	while run:
 		clock.tick(30)
@@ -174,6 +176,31 @@ def main():
 				run = False
 
 		#ball.move()
+		add_pipe = False
+		rem = []
+		for pipe in pipes:
+			if pipe.collide(ball):
+				pass
+
+			if pipe.x + pipe.PIPE_TOP.get_width() < 0:
+				rem.append(pipe)
+
+			if not pipe.passed and pipe.x < ball.x:
+				pipe.passed = True
+				add_pipe = True
+
+			pipe.move()
+
+		if add_pipe:
+			score += 1
+			pipes.append(Pipe(550))
+
+		for r in rem:
+			pipes.remove(r)
+
+		if ball.y + ball.img.get_height() >= 730:
+			pass
+
 		base.move()
 		draw_window(win, ball, pipes, base)
 
