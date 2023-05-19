@@ -99,12 +99,12 @@ class Pipe:
 		self.set_height()
 
 	def set_height(self):
-		self.height = random.randrange(60, 350)
+		self.height = self.y
 		self.left = self.height - self.PIPE_TOP.get_height()
 		self.right = self.height + self.GAP
 
 	def move(self):
-		self.y += self.VEL
+		self.y -= self.VEL
 
 	def draw(self, win):
 		win.blit(self.PIPE_TOP, (self.y, self.left))
