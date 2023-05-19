@@ -86,12 +86,12 @@ class Pipe:
 	GAP = 200
 	VEL = 5
 
-	def __init__(self, x):
-		self.x = x
+	def __init__(self, y):
+		self.y = y
 		self.height = 0
 
-		self.top = 0
-		self.bottom = 0
+		self.left = 0
+		self.right = 0
 		self.PIPE_TOP = pygame.transform.flip(PIPE_IMG, False, True)
 		self.PIPE_BOTTOM = PIPE_IMG
 
@@ -100,23 +100,23 @@ class Pipe:
 
 	def set_height(self):
 		self.height = random.randrange(60, 350)
-		self.top = self.height - self.PIPE_TOP.get_height()
-		self.bottom = self.height + self.GAP
+		self.left = self.height - self.PIPE_TOP.get_height()
+		self.right = self.height + self.GAP
 
 	def move(self):
-		self.x -= self.VEL
+		self.y += self.VEL
 
 	def draw(self, win):
-		win.blit(self.PIPE_TOP, (self.x, self. top))
-		win.blit(self.PIPE_BOTTOM, (self.x, self.bottom))
+		win.blit(self.PIPE_TOP, (self.y, self.left))
+		win.blit(self.PIPE_BOTTOM, (self.y, self.right))
 
 	def collide(self, ball):
 		ball_mask = ball.get_mask()
 		top_mask = pygame.mask.from_surface(self.PIPE_TOP)
 		bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
 
-		top_offset = (self.x - ball.x, self.top - round(ball.y))
-		bottom_offset = (self.x - ball.x, self.bottom - round(ball.y))
+		top_offset = (self.y + ball.x, self.left + round(ball.y))
+		bottom_offset = (self.y + ball.x, self.right + round(ball.y))
 
 		b_point = ball_mask.overlap(bottom_mask, bottom_offset)
 		t_point = ball_mask.overlap(top_mask, top_offset)
@@ -188,10 +188,10 @@ def main():
 			if pipe.collide(ball):
 				pass
 
-			if pipe.x + pipe.PIPE_TOP.get_width() < 0:
+			if pipe.y + pipe.PIPE_TOP.get_width() < 0:
 				rem.append(pipe)
 
-			if not pipe.passed and pipe.x < ball.x:
+			if not pipe.passed and pipe.y < ball.x:
 				pipe.passed = True
 				add_pipe = True
 
