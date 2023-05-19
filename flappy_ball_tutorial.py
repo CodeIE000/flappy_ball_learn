@@ -3,20 +3,23 @@ import neat
 import time
 import os
 import random
+pygame.font.init()
 
 WIN_WIDTH = 500
 WIN_HEIGHT = 670
 
 BALL_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))]
-PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe.png")))
-BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base.png")))
+PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe3.png")))
+BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base1.png")))
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
+
+STAT_FONT = pygame.font.SysFont("azonix", 50)
 
 class Ball:
 	IMGS = BALL_IMGS
 	MAX_ROTATION = 25
 	ROT_VEL = 20
-	ANIMATION_TIME = 5
+	ANIMATION_TIME = 20
 
 	def __init__(self, x, y):
 		self.x = x
@@ -61,9 +64,9 @@ class Ball:
 		elif self.img_count < self.ANIMATION_TIME*2:
 			self.img = self.IMGS[1]
 		elif self.img_count < self.ANIMATION_TIME*3:
-			self.img = self.IMGS[2]
+			self.img = self.IMGS[0]
 		elif self.img_count < self.ANIMATION_TIME*4:
-			self.img = self.IMGS[1]
+			self.img = self.IMGS[2]
 		elif self.img_count == self.ANIMATION_TIME*4 + 1:
 			self.img = self.IMGS[0]
 			self.img_count = 0
@@ -124,7 +127,7 @@ class Pipe:
 		return False
 
 class Base:
-	VEL = 30
+	VEL = 5
 	WIDTH = BASE_IMG.get_width()
 	IMG = BASE_IMG
 
@@ -148,11 +151,14 @@ class Base:
 		win.blit(self.IMG, (self.x2, self.y))
 
 
-def draw_window(win, ball, pipes, base):
+def draw_window(win, ball, pipes, base, score):
 	win.blit(BG_IMG, (0,-160))
 
 	for pipe in pipes:
 		pipe.draw(win)
+
+	text = STAT_FONT.render("Score: " + str(score), 1, (255,255,255))
+	win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10))
 
 	base.draw(win)
 
@@ -202,7 +208,7 @@ def main():
 			pass
 
 		base.move()
-		draw_window(win, ball, pipes, base)
+		draw_window(win, ball, pipes, base, score)
 
 	pygame.quit()
 	quit()
