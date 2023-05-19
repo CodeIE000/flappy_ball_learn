@@ -115,8 +115,8 @@ class Pipe:
 		top_mask = pygame.mask.from_surface(self.PIPE_TOP)
 		bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
 
-		top_offset = (self.y + ball.x, self.left + round(ball.y))
-		bottom_offset = (self.y + ball.x, self.right + round(ball.y))
+		top_offset = (self.y - ball.x, self.left - round(ball.y))
+		bottom_offset = (self.y - ball.x, self.right - round(ball.y))
 
 		b_point = ball_mask.overlap(bottom_mask, bottom_offset)
 		t_point = ball_mask.overlap(top_mask, top_offset)
