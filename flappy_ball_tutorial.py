@@ -5,10 +5,14 @@ import os
 import random
 pygame.font.init()
 
-WIN_WIDTH = 500
-WIN_HEIGHT = 670
+WIN_WIDTH = 500 #500
+WIN_HEIGHT = 670 #670
 
-BALL_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))]
+BALL_IMGS = [
+pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), 
+pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), 
+pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))
+]
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe.png")))
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base.png")))
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
@@ -86,8 +90,9 @@ class Pipe:
 	GAP = 200
 	VEL = 5
 
-	def __init__(self, y):
+	def __init__(self,  y):
 		self.y = y
+		self.x = WIN_WIDTH
 		self.height = 0
 
 		self.left = 0
@@ -99,32 +104,18 @@ class Pipe:
 		self.set_height()
 
 	def set_height(self):
-		self.height = self.y
-		self.left = self.height - self.PIPE_TOP.get_height()
-		self.right = self.height + self.GAP
+		self.height = random.randrange(60, 350)
+		self.top = self.height - self.PIPE_TOP.get_height()
+		self.bottom = self.height + self.GAP
 
 	def move(self):
 		self.y -= self.VEL
 
 	def draw(self, win):
-		win.blit(self.PIPE_TOP, (self.y, self.left))
-		win.blit(self.PIPE_BOTTOM, (self.y, self.right))
+		win.blit(self.PIPE_TOP, (self.y, self.top))
+		win.blit(self.PIPE_BOTTOM, (self.y, self.bottom))
 
-	def collide(self, ball):
-		ball_mask = ball.get_mask()
-		top_mask = pygame.mask.from_surface(self.PIPE_TOP)
-		bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
 
-		top_offset = (self.y - ball.x, self.left - round(ball.y))
-		bottom_offset = (self.y - ball.x, self.right - round(ball.y))
-
-		b_point = ball_mask.overlap(bottom_mask, bottom_offset)
-		t_point = ball_mask.overlap(top_mask, top_offset)
-
-		if t_point or b_point:
-			return True
-
-		return False
 
 class Base:
 	VEL = 5
@@ -185,15 +176,6 @@ def main():
 		add_pipe = False
 		rem = []
 		for pipe in pipes:
-			if pipe.collide(ball):
-				pass
-
-			if pipe.y + pipe.PIPE_TOP.get_width() < 0:
-				rem.append(pipe)
-
-			if not pipe.passed and pipe.y < ball.x:
-				pipe.passed = True
-				add_pipe = True
 
 			pipe.move()
 
