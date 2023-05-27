@@ -5,14 +5,10 @@ import os
 import random
 pygame.font.init()
 
-WIN_WIDTH = 500 #500
-WIN_HEIGHT = 670 #670
+WIN_WIDTH = 500
+WIN_HEIGHT = 670
 
-BALL_IMGS = [
-pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), 
-pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), 
-pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))
-]
+BALL_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))]
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe.png")))
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base.png")))
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
@@ -90,13 +86,12 @@ class Pipe:
 	GAP = 200
 	VEL = 5
 
-	def __init__(self,  y):
-		self.y = y
-		self.x = WIN_WIDTH
+	def __init__(self, x):
+		self.x = x
 		self.height = 0
 
-		self.left = 0
-		self.right = 0
+		self.top = 0
+		self.bottom = 0
 		self.PIPE_TOP = pygame.transform.flip(PIPE_IMG, False, True)
 		self.PIPE_BOTTOM = PIPE_IMG
 
@@ -109,12 +104,12 @@ class Pipe:
 		self.bottom = self.height + self.GAP
 
 	def move(self):
-		self.y -= self.VEL
+		self.x -= self.VEL
 
 	def draw(self, win):
-		win.blit(self.PIPE_TOP, (self.y, self.top))
-		win.blit(self.PIPE_BOTTOM, (self.y, self.bottom))
-		
+		win.blit(self.PIPE_TOP, (self.x, self. top))
+		win.blit(self.PIPE_BOTTOM, (self.x, self.bottom))
+
 	def collide(self, ball):
 		ball_mask = ball.get_mask()
 		top_mask = pygame.mask.from_surface(self.PIPE_TOP)
@@ -130,7 +125,6 @@ class Pipe:
 			return True
 
 		return False
-
 
 class Base:
 	VEL = 5
@@ -202,7 +196,7 @@ def main():
 				add_pipe = True
 
 			pipe.move()
-			
+
 		if add_pipe:
 			score += 1
 			pipes.append(Pipe(550))
