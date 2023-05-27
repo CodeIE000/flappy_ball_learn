@@ -114,7 +114,22 @@ class Pipe:
 	def draw(self, win):
 		win.blit(self.PIPE_TOP, (self.y, self.top))
 		win.blit(self.PIPE_BOTTOM, (self.y, self.bottom))
+		
+	def collide(self, ball):
+		ball_mask = ball.get_mask()
+		top_mask = pygame.mask.from_surface(self.PIPE_TOP)
+		bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
 
+		top_offset = (self.x - ball.x, self.top - round(ball.y))
+		bottom_offset = (self.x - ball.x, self.bottom - round(ball.y))
+
+		b_point = ball_mask.overlap(bottom_mask, bottom_offset)
+		t_point = ball_mask.overlap(top_mask, top_offset)
+
+		if t_point or b_point:
+			return True
+
+		return False
 
 
 class Base:
