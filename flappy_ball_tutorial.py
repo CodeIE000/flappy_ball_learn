@@ -176,9 +176,18 @@ def main():
 		add_pipe = False
 		rem = []
 		for pipe in pipes:
+			if pipe.collide(ball):
+				pass
+
+			if pipe.x + pipe.PIPE_TOP.get_width() < 0:
+				rem.append(pipe)
+
+			if not pipe.passed and pipe.x < ball.x:
+				pipe.passed = True
+				add_pipe = True
 
 			pipe.move()
-
+			
 		if add_pipe:
 			score += 1
 			pipes.append(Pipe(550))
