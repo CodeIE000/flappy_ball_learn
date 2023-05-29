@@ -86,7 +86,7 @@ class Pipe:
 	GAP = 200
 	VEL = 5
 
-	def __init__(self, x,):
+	def __init__(self, x):
 		self.x = x
 		self.height = 0
 
@@ -107,7 +107,7 @@ class Pipe:
 		self.x -= self.VEL
 
 	def draw(self, win):
-		win.blit(self.PIPE_TOP, (self.x, self. top))
+		win.blit(self.PIPE_TOP, (self.x, self.top))
 		win.blit(self.PIPE_BOTTOM, (self.x, self.bottom))
 
 	def collide(self, ball):
