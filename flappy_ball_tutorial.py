@@ -86,7 +86,7 @@ class Pipe:
 	GAP = 200
 	VEL = 5
 
-	def __init__(self, x):
+	def __init__(self, x,):
 		self.x = x
 		self.height = 0
 
