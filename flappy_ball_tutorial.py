@@ -118,13 +118,13 @@ class Pipe:
 
 class Base:
 	VEL = 5
-	WIDTH = BASE_IMG.get_width()
+	HEIGHT = BASE_IMG.get_height()
 	IMG = BASE_IMG
 
 	def __init__(self, x,y):
 		self.y = 0
 		self.x1 = 500
-		self.x2 = self.WIDTH
+		self.x2 = get_height()
 
 	def move(self):
 		self.y += self.VEL
