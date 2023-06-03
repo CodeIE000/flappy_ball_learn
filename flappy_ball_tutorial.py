@@ -187,10 +187,10 @@ def main():
 			if pipe.collide(ball):
 				pass
 
-			if pipe.y + pipe.PIPE_LEFT.get_height() < 200:
+			if pipe.y >= 700:
 				rem.append(pipe)
 
-			if not pipe.passed and pipe.y < ball.y:
+			if not pipe.passed and pipe.y > 300:
 				pipe.passed = True
 				add_pipe = True
 
@@ -198,7 +198,7 @@ def main():
 
 		if add_pipe:
 			score += 1
-			pipes.append(Pipe(200))
+			pipes.append(Pipe(-100))
 
 		for r in rem:
 			pipes.remove(r)
