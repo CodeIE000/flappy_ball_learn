@@ -87,7 +87,7 @@ class Ball:
 	def get_mask(self):
 		return pygame.mask.from_surface(self.img)
 class Pipe:
-	VEL = 5
+	VEL = 3
 	GAP = 400
 
 	def __init__(self, y):
