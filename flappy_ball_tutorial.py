@@ -5,13 +5,14 @@ import os
 import random
 pygame.font.init()
 
-WIN_WIDTH = 500
-WIN_HEIGHT = 670
+WIN_WIDTH = 1350
+WIN_HEIGHT = 660
 
 BALL_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))]
-PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe.png")))
-BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base.png")))
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
+PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe3.png")))
+BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base1.png")))
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "obg.png")))
+MBG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "mbg.png")))
 
 STAT_FONT = pygame.font.SysFont("azonix", 50)
 
@@ -81,94 +82,140 @@ class Ball:
 
 	def get_mask(self):
 		return pygame.mask.from_surface(self.img)
-
 class Pipe:
-	GAP = 200
 	VEL = 5
+	GAP = 400
 
-	def __init__(self, x):
-		self.x = x
-		self.height = 0
-
-		self.top = 0
-		self.bottom = 0
-		self.PIPE_TOP = pygame.transform.flip(PIPE_IMG, False, True)
-		self.PIPE_BOTTOM = PIPE_IMG
-
+	def __init__(self, y):
+		self.y = y
+		self.width = 0
+		self.left = 0
+		self.right = 0
+		self.PIPE_LEFT = pygame.transform.flip(PIPE_IMG, True, False)
+		self.PIPE_RIGHT = PIPE_IMG
 		self.passed = False
-		self.set_height()
+		self.set_width()
 
-	def set_height(self):
-		self.height = random.randrange(60, 350)
-		self.top = self.height - self.PIPE_TOP.get_height()
-		self.bottom = self.height + self.GAP
+	def set_width(self):
+		self.width = random.randrange(250, 650)
+		self.left = self.width - self.PIPE_LEFT.get_width()
+		self.right = self.width + self.GAP
 
 	def move(self):
-		self.x -= self.VEL
+		self.y += self.VEL
 
 	def draw(self, win):
-		win.blit(self.PIPE_TOP, (self.x, self.top))
-		win.blit(self.PIPE_BOTTOM, (self.x, self.bottom))
+		win.blit(self.PIPE_LEFT, (self.left, self.y))
+		win.blit(self.PIPE_RIGHT, (self.right, self.y))
 
 	def collide(self, ball):
 		ball_mask = ball.get_mask()
-		top_mask = pygame.mask.from_surface(self.PIPE_TOP)
-		bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
+		left_mask = pygame.mask.from_surface(self.PIPE_LEFT)
+		right_mask = pygame.mask.from_surface(self.PIPE_RIGHT)
 
-		top_offset = (self.x - ball.x, self.top - round(ball.y))
-		bottom_offset = (self.x - ball.x, self.bottom - round(ball.y))
+		left_offset = (self.y - ball.x, self.left - round(ball.y))
+		right_offset = (self.y - ball.x, self.right - round(ball.y))
 
-		b_point = ball_mask.overlap(bottom_mask, bottom_offset)
-		t_point = ball_mask.overlap(top_mask, top_offset)
+		r_point = ball_mask.overlap(right_mask, right_offset)
+		l_point = ball_mask.overlap(left_mask, left_offset)
 
-		if t_point or b_point:
+		if l_point or r_point:
 			return True
 
 		return False
 
-class Base:
+class Base1:
 	VEL = 5
-	WIDTH = BASE_IMG.get_width()
+	HEIGHT = BASE_IMG.get_height()
 	IMG = BASE_IMG
 
-	def __init__(self, y):
-		self.y = y
-		self.x1 = 0
-		self.x2 = self.WIDTH
+	def __init__(self, x):
+		self.x = x
+		self.y1 = 0
+		self.y2 = self.HEIGHT
 
 	def move(self):
-		self.x1 -= self.VEL
-		self.x2 -= self.VEL
+		self.y1 += self.VEL
+		self.y2 += self.VEL
 
-		if self.x1 + self.WIDTH < 0:
-			self.x1 = self.x2 + self.WIDTH
+		if self.y1 >= WIN_HEIGHT:
+			self.y1 = self.y2 - self.HEIGHT
 
-		if self.x2 + self.WIDTH < 0:
-			self.x2 = self.x1 + self.WIDTH
+		if self.y2 >= WIN_HEIGHT:
+			self.y2 = self.y1 - self.HEIGHT
 
 	def draw(self, win):
-		win.blit(self.IMG, (self.x1, self.y))
-		win.blit(self.IMG, (self.x2, self.y))
+		win.blit(self.IMG, (self.x, self.y1))
+		win.blit(self.IMG, (self.x, self.y2))
+
+class Base2:
+	VEL = 5
+	HEIGHT = BASE_IMG.get_height()
+	IMG = pygame.transform.flip(BASE_IMG, True, False)
+
+	def __init__(self, x):
+		self.x = x
+		self.y1 = 0
+		self.y2 = self.HEIGHT
+
+	def move(self):
+		self.y1 += self.VEL
+		self.y2 += self.VEL
+
+		if self.y1 >= WIN_HEIGHT:
+			self.y1 = self.y2 - self.HEIGHT
+
+		if self.y2 >= WIN_HEIGHT:
+			self.y2 = self.y1 - self.HEIGHT
+
+	def draw(self, win):
+		win.blit(self.IMG, (self.x, self.y1))
+		win.blit(self.IMG, (self.x, self.y2))
+
+class BG1:
+	VEL = 1
+	HEIGHT = -1160
+	IMG = BG_IMG
+
+	def __init__(self, x):
+		self.x = x
+		self.y1 = -1000
+
+	def move(self):
+		self.y1 += self.VEL
 
 
-def draw_window(win, ball, pipes, base, score):
-	win.blit(BG_IMG, (0,-160))
+	def draw(self, win):
+		win.blit(self.IMG, (self.x, self.y1))
+
+
+def draw_window(win, ball, bg1, pipes, base1, base2, score):
+
+	win.blit(MBG_IMG, (120,-160))
+	win.blit(MBG_IMG, (600,-160))
+
+	bg1.draw(win)
 
 	for pipe in pipes:
 		pipe.draw(win)
 
-	text = STAT_FONT.render("Score: " + str(score), 1, (255,255,255))
-	win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10))
+	base1.draw(win)
+	base2.draw(win)
 
-	base.draw(win)
+
+	STAT_FONT = pygame.font.Font(None, 40)
+	text = STAT_FONT.render("Score: " + str(score), True, (255,255,255))
+	win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10))
 
 	ball.draw(win)
 	pygame.display.update()
 
 def main():
-	ball = Ball(230,300)
-	base = Base(600)
-	pipes = [Pipe(700)]
+	ball = Ball(630,300)
+	base1 = Base1(1150)
+	base2 = Base2(-30)
+	bg1 = BG1(0)
+	pipes = [Pipe(-100)]
 	win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 	clock = pygame.time.Clock()
 
@@ -182,16 +229,19 @@ def main():
 				run = False
 
 		#ball.move()
-		add_pipe = False
+		add_pipe = False 
 		rem = []
+
+		bg1.move()
+
 		for pipe in pipes:
 			if pipe.collide(ball):
 				pass
 
-			if pipe.x + pipe.PIPE_TOP.get_width() < 0:
+			if pipe.y >= 700:
 				rem.append(pipe)
 
-			if not pipe.passed and pipe.x < ball.x:
+			if not pipe.passed and pipe.y > 300:
 				pipe.passed = True
 				add_pipe = True
 
@@ -199,7 +249,7 @@ def main():
 
 		if add_pipe:
 			score += 1
-			pipes.append(Pipe(550))
+			pipes.append(Pipe(-100))
 
 		for r in rem:
 			pipes.remove(r)
@@ -207,8 +257,10 @@ def main():
 		if ball.y + ball.img.get_height() >= 730:
 			pass
 
-		base.move()
-		draw_window(win, ball, pipes, base, score)
+		base1.move()
+		base2.move()
+		
+		draw_window(win, ball, bg1, pipes, base1, base2, score)
 
 	pygame.quit()
 	quit()
