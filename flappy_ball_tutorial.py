@@ -16,18 +16,15 @@ pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))
 
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe3.png")))
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base1.png")))
-
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg7.png")))
-
 MBG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "mbg2.png")))
-
 STAT_FONT = pygame.font.SysFont("azonix", 50)
 
 class Ball:
 	IMGS = BALL_IMGS
 	MAX_ROTATION = 25
 	ROT_VEL = 20
-	ANIMATION_TIME = 20
+	ANIMATION_TIME = 5
 
 	def __init__(self, x, y):
 		self.x = x
@@ -179,12 +176,62 @@ class Base2:
 		win.blit(self.IMG, (self.x, self.y1))
 		win.blit(self.IMG, (self.x, self.y2))
 
+class BG1:
+	VEL = 1/4
+	HEIGHT = BG_IMG.get_height()
+	IMG = BG_IMG
+
+	def __init__(self, x):
+		self.x = x
+		self.y1 = 0
+		self.y2 = self.HEIGHT
+
+	def move(self):
+		self.y1 += self.VEL
+		self.y2 += self.VEL
+
+		if self.y1 >= WIN_HEIGHT:
+			self.y1 = self.y2 - self.HEIGHT
+
+		if self.y2 >= WIN_HEIGHT:
+			self.y2 = self.y1 - self.HEIGHT
+
+	def draw(self, win):
+		win.blit(self.IMG, (self.x, self.y1))
+		win.blit(self.IMG, (self.x, self.y2))
+
+class BG2:
+	VEL = 1/4
+	HEIGHT = BG_IMG.get_height()
+	IMG = BG_IMG
+
+	def __init__(self, x):
+		self.x = x
+		self.y1 = 0
+		self.y2 = self.HEIGHT
+
+	def move(self):
+		self.y1 += self.VEL
+		self.y2 += self.VEL
+
+		if self.y1 >= WIN_HEIGHT:
+			self.y1 = self.y2 - self.HEIGHT
+
+		if self.y2 >= WIN_HEIGHT:
+			self.y2 = self.y1 - self.HEIGHT
+
+	def draw(self, win):
+		win.blit(self.IMG, (self.x, self.y1))
+		win.blit(self.IMG, (self.x, self.y2))
 
 
-def draw_window(win, ball, pipes, base1, base2, score):
+def draw_window(win, ball, bg1, bg2, pipes, base1, base2, score):
 
-	win.blit(BG_IMG, (120,-160))
-	win.blit(BG_IMG, (600,-160))
+	win.blit(MBG_IMG, (120,-160))
+	win.blit(MBG_IMG, (600,-160))
+
+	bg1.draw(win)
+	bg2.draw(win)
 
 	for pipe in pipes:
 		pipe.draw(win)
@@ -193,7 +240,7 @@ def draw_window(win, ball, pipes, base1, base2, score):
 	base2.draw(win)
 
 
-	STAT_FONT = pygame.font.Font(None, 40)
+	STAT_FONT = pygame.font.Font(None, 30)
 	text = STAT_FONT.render("Score: " + str(score), True, (255,255,255))
 	win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10))
 
@@ -201,7 +248,9 @@ def draw_window(win, ball, pipes, base1, base2, score):
 	pygame.display.update()
 
 def main():
-	ball = Ball(630,300)
+	ball = Ball(630,400)
+	bg1 = BG1(130)
+	bg2 = BG2(600)
 	base1 = Base1(1150)
 	base2 = Base2(-30)
 	pipes = [Pipe(-100)]
@@ -220,6 +269,9 @@ def main():
 		#ball.move()
 		add_pipe = False 
 		rem = []
+
+		bg1.move()
+		bg2.move()
 
 		for pipe in pipes:
 			if pipe.collide(ball):
@@ -247,7 +299,7 @@ def main():
 		base1.move()
 		base2.move()
 		
-		draw_window(win, ball, pipes, base1, base2, score)
+		draw_window(win, ball, bg1, bg2, pipes, base1, base2, score)
 
 	pygame.quit()
 	quit()
