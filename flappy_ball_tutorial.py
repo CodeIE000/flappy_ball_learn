@@ -10,8 +10,9 @@ WIN_HEIGHT = 660
 
 BALL_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))]
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe3.png")))
-BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base.png")))
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
+BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base1.png")))
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "obg.png")))
+MBG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "mbg.png")))
 
 STAT_FONT = pygame.font.SysFont("azonix", 50)
 
@@ -83,7 +84,7 @@ class Ball:
 		return pygame.mask.from_surface(self.img)
 class Pipe:
 	VEL = 5
-	GAP = 500
+	GAP = 400
 
 	def __init__(self, y):
 		self.y = y
@@ -96,7 +97,7 @@ class Pipe:
 		self.set_width()
 
 	def set_width(self):
-		self.width = random.randrange(200, 760)
+		self.width = random.randrange(250, 650)
 		self.left = self.width - self.PIPE_LEFT.get_width()
 		self.right = self.width + self.GAP
 
@@ -123,7 +124,7 @@ class Pipe:
 
 		return False
 
-class Base:
+class Base1:
 	VEL = 5
 	HEIGHT = BASE_IMG.get_height()
 	IMG = BASE_IMG
@@ -147,26 +148,73 @@ class Base:
 		win.blit(self.IMG, (self.x, self.y1))
 		win.blit(self.IMG, (self.x, self.y2))
 
+class Base2:
+	VEL = 5
+	HEIGHT = BASE_IMG.get_height()
+	IMG = pygame.transform.flip(BASE_IMG, True, False)
 
-def draw_window(win, ball, pipes, base, score):
-	win.blit(BG_IMG, (0,-160))
-	win.blit(BG_IMG, (570,-160))
-	win.blit(BG_IMG, (1130,-160))
+	def __init__(self, x):
+		self.x = x
+		self.y1 = 0
+		self.y2 = self.HEIGHT
+
+	def move(self):
+		self.y1 += self.VEL
+		self.y2 += self.VEL
+
+		if self.y1 >= WIN_HEIGHT:
+			self.y1 = self.y2 - self.HEIGHT
+
+		if self.y2 >= WIN_HEIGHT:
+			self.y2 = self.y1 - self.HEIGHT
+
+	def draw(self, win):
+		win.blit(self.IMG, (self.x, self.y1))
+		win.blit(self.IMG, (self.x, self.y2))
+
+class BG1:
+	VEL = 1
+	HEIGHT = -1160
+	IMG = BG_IMG
+
+	def __init__(self, x):
+		self.x = x
+		self.y1 = -1000
+
+	def move(self):
+		self.y1 += self.VEL
+
+
+	def draw(self, win):
+		win.blit(self.IMG, (self.x, self.y1))
+
+
+def draw_window(win, ball, bg1, pipes, base1, base2, score):
+
+	win.blit(MBG_IMG, (120,-160))
+	win.blit(MBG_IMG, (600,-160))
+
+	bg1.draw(win)
 
 	for pipe in pipes:
 		pipe.draw(win)
 
-	base.draw(win)
+	base1.draw(win)
+	base2.draw(win)
 
-	text = STAT_FONT.render("Score: " + str(score), 1, (255,255,255))
+
+	STAT_FONT = pygame.font.Font(None, 40)
+	text = STAT_FONT.render("Score: " + str(score), True, (255,255,255))
 	win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10))
 
 	ball.draw(win)
 	pygame.display.update()
 
 def main():
-	ball = Ball(230,300)
-	base = Base(1150)
+	ball = Ball(630,300)
+	base1 = Base1(1150)
+	base2 = Base2(-30)
+	bg1 = BG1(0)
 	pipes = [Pipe(-100)]
 	win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 	clock = pygame.time.Clock()
@@ -181,8 +229,11 @@ def main():
 				run = False
 
 		#ball.move()
-		add_pipe = False
+		add_pipe = False 
 		rem = []
+
+		bg1.move()
+
 		for pipe in pipes:
 			if pipe.collide(ball):
 				pass
@@ -206,8 +257,10 @@ def main():
 		if ball.y + ball.img.get_height() >= 730:
 			pass
 
-		base.move()
-		draw_window(win, ball, pipes, base, score)
+		base1.move()
+		base2.move()
+		
+		draw_window(win, ball, bg1, pipes, base1, base2, score)
 
 	pygame.quit()
 	quit()
