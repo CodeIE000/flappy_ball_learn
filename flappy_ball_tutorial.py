@@ -8,11 +8,18 @@ pygame.font.init()
 WIN_WIDTH = 1350
 WIN_HEIGHT = 660
 
-BALL_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))]
+BALL_IMGS = [
+pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball1.png"))), 
+pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball2.png"))), 
+pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "ball3.png")))
+]
+
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe3.png")))
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base1.png")))
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "obg.png")))
-MBG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "mbg.png")))
+
+BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg7.png")))
+
+MBG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "mbg2.png")))
 
 STAT_FONT = pygame.font.SysFont("azonix", 50)
 
@@ -172,29 +179,12 @@ class Base2:
 		win.blit(self.IMG, (self.x, self.y1))
 		win.blit(self.IMG, (self.x, self.y2))
 
-class BG1:
-	VEL = 1
-	HEIGHT = -1160
-	IMG = BG_IMG
-
-	def __init__(self, x):
-		self.x = x
-		self.y1 = -1000
-
-	def move(self):
-		self.y1 += self.VEL
 
 
-	def draw(self, win):
-		win.blit(self.IMG, (self.x, self.y1))
+def draw_window(win, ball, pipes, base1, base2, score):
 
-
-def draw_window(win, ball, bg1, pipes, base1, base2, score):
-
-	win.blit(MBG_IMG, (120,-160))
-	win.blit(MBG_IMG, (600,-160))
-
-	bg1.draw(win)
+	win.blit(BG_IMG, (120,-160))
+	win.blit(BG_IMG, (600,-160))
 
 	for pipe in pipes:
 		pipe.draw(win)
@@ -214,7 +204,6 @@ def main():
 	ball = Ball(630,300)
 	base1 = Base1(1150)
 	base2 = Base2(-30)
-	bg1 = BG1(0)
 	pipes = [Pipe(-100)]
 	win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 	clock = pygame.time.Clock()
@@ -231,8 +220,6 @@ def main():
 		#ball.move()
 		add_pipe = False 
 		rem = []
-
-		bg1.move()
 
 		for pipe in pipes:
 			if pipe.collide(ball):
@@ -260,7 +247,7 @@ def main():
 		base1.move()
 		base2.move()
 		
-		draw_window(win, ball, bg1, pipes, base1, base2, score)
+		draw_window(win, ball, pipes, base1, base2, score)
 
 	pygame.quit()
 	quit()
